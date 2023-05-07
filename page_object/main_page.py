@@ -1,8 +1,8 @@
 import time
-from selenium.webdriver.common.by import By
 from selenium import webdriver
 from page_object.base_page import BasePage
-from locators.main import MainPageLocators
+from locators.main_locators import MainPageLocators
+import allure
 
 
 class ShopMainPage(BasePage):
@@ -10,51 +10,50 @@ class ShopMainPage(BasePage):
         super().__init__(driver)
         self.url = 'https://galanteya.by/'
 
-# Проверяем является ли данная страница ожидаемой
+    @allure.step('Page expectancy check')
     def checking_main_page_for_expectation(self):
         assert self.url == self.webdriver.current_url
 
-# Наличие и кликабельность кнопки связаться с консультантом и наличие надписи обратная связь
+    @allure.step('Checking the visibility of an element "GALANTEYA"')
+    def check_element1_for_pending(self):
+        assert self.find_visible_element(MainPageLocators.visible_element1_main_page).is_displayed()
+
+    @allure.step('Feedback button operation test')
     def feedback_button_test(self):
         self.click_element(MainPageLocators.feedback)
-        time.sleep(3)
-        assert self.find_element(MainPageLocators.text_feedback).text == 'Обратная связь'
+        time.sleep(2)
+        assert self.get_text(MainPageLocators.text_feedback) == 'Обратная связь'
+        allure.attach('Обратная связь', name='Оpen window text feedback')
 
-# Проверяем наличие ошибки при некорректном вводе email в обратной связи, выход
+    @allure.step('Сhecking for an error and its text if the email is entered incorrectly')
     def email_error_checking(self):
-        self.send_keys(MainPageLocators.email_in_feedback, 'illya.krugyandex.ru')
+        self.send_keys(MainPageLocators.email_in_feedback, 'pischuksyandex.ru')
         self.click_element(MainPageLocators.send_button)
-        error2 = self.find_element(MainPageLocators.email_error)
-        assert error2.text == 'Указан неверный Емейл'
-        assert error2.is_displayed()
+        assert self.get_text(MainPageLocators.email_error) == 'Указан неверный Емейл'
+        allure.attach('Указан неверный Емейл', name='Feedback error text')
+        assert self.find_visible_element(MainPageLocators.email_error).is_displayed()
         self.click_element(MainPageLocators.exit_feedback)
 
-# Проверяем наличие элемента GALANTEYA на главной страницы
-    def check_element1_for_pending(self):
-        assert self.find_element(MainPageLocators.visible_element1_main_page).is_displayed()
-
-# Проверяем наличие кнопки Вход/Pегистрация на главной страницы
+    @allure.step('Checking the visibility of an element "Login and registration"')
     def check_element2_for_pending(self):
-        assert self.find_element(MainPageLocators.visible_element2_main_page).is_displayed()
+        assert self.find_visible_element(MainPageLocators.visible_element2_main_page).is_displayed()
 
-# Проверка на ожидаемость города от выбранной страны Россия
+    @allure.step('Сhecking for the expected text Moscow')
     def expected_city_of_moscow(self):
         self.click_element(MainPageLocators.country_russia)
-        assert self.find_element(MainPageLocators.locator_city).text == 'Москва'
+        assert self.get_text(MainPageLocators.locator_city) == 'Москва'
+        allure.attach('Москва', name='Expected city of Russia')
 
-# Проверка на ожидаемость города от выбранной страны Буларусь
+    @allure.step('Сhecking for the expected text Minsk')
     def expected_city_of_minsk(self):
         self.click_element(MainPageLocators.country_belarus)
-        assert self.find_element(MainPageLocators.locator_city).text == 'Минск'
+        assert self.get_text(MainPageLocators.locator_city) == 'Минск'
+        allure.attach('Минск', name='expected city of Belarus')
 
-# Проверяем наличие ошибки при некорректном вводе email
+    @allure.step('Сhecking for an error and its text if the email is entered incorrectly')
     def error_incorrect_email_input(self):
-        self.send_keys(MainPageLocators.email_input_line, 'illya.krugyandex.ru')
+        self.send_keys(MainPageLocators.email_input_line, 'pischuks@yand,ru')
         self.click_element(MainPageLocators.subscribe_button)
-        error1 = self.find_element(MainPageLocators.email_text_error)
-        assert error1.text == 'Некорректный e-mail'
-        assert error1.is_displayed()
-
-# Переходим в вкладку каталог интернет магазина
-    def catalog_muzhchinam(self):
-        self.click_element(MainPageLocators.catalog)
+        assert self.get_text(MainPageLocators.email_text_error) == 'Некорректный e-mail'
+        allure.attach('Некорректный e-mail', name='Error text')
+        assert self.find_visible_element(MainPageLocators.email_text_error).is_displayed()

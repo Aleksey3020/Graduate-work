@@ -14,8 +14,8 @@ class PersonalAccountLocators:
     locator_price_value = (By.CSS_SELECTOR, '[class="v-price price price--small price--column"]>div'
                                             '>span[class="price__value"]')
     locator_total_payable = (By.CSS_SELECTOR, '[class="shopping-cart__total-info"]>div:nth-child(4) span')
-    string_street = (By.CSS_SELECTOR, '[class="form__groups flc"]>div:nth-child(2)'
-                                      ' [class="form__row form__row--text"] input')
+    string_street = (By.CSS_SELECTOR, '[class="form__groups flc"]>div:nth-child(2) [class="form__group-body"]>'
+                                      'div:nth-child(3) input')
     string_house = (By.CSS_SELECTOR, '[class="form__groups flc"]>div:nth-child(2)'
                                      ' [class="form__group-body"]>div:nth-child(5) input')
     string_flat = (By.CSS_SELECTOR, '[class="form__groups flc"]>div:nth-child(2)'

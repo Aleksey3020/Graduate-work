@@ -1,6 +1,8 @@
+import time
 from selenium import webdriver
 from page_object.base_page import BasePage
-from locators.personal_account import PersonalAccountLocators
+from locators.personal_account_locators import PersonalAccountLocators
+import allure
 
 
 class PersonalAccount (BasePage):
@@ -8,48 +10,48 @@ class PersonalAccount (BasePage):
         super().__init__(driver)
         self.url = 'https://galanteya.by/'
 
-# Проверка на то, что мы вошли в личный кабинет
-    def checking_personal_account(self):
+    @allure.step('Login to your personal account')
+    def login_account(self):
         self.click_element(PersonalAccountLocators.login_and_register_button)
-        self.send_keys(PersonalAccountLocators.email_input, 'illya.krug@yandex.ru')
-        self.send_keys(PersonalAccountLocators.password_input, 'qwer21rewq34')
+        self.send_keys(PersonalAccountLocators.email_input, 'vgugnevich@yandex.ru')
+        self.send_keys(PersonalAccountLocators.password_input, 'qwer2121rewQ')
         self.click_element(PersonalAccountLocators.login_button)
-        assert self.find_element(PersonalAccountLocators.open_personal_account).text == 'Круг Илья'
-
-# Проверяем изменение цены относительно выбора количество изделий
-    def price_change_check(self):
+        time.sleep(5)
         self.click_element(PersonalAccountLocators.cart_button)
+        time.sleep(3)
         self.click_element(PersonalAccountLocators.go_to_checkout_button)
+        time.sleep(3)
+
+    @allure.step('Checking the entrance to your personal account by text')
+    def checking_personal_account(self):
+        assert self.get_text(PersonalAccountLocators.open_personal_account) == 'Гугневич Вадим'
+        allure.attach('Гугневич Вадим', name='Text in personal account')
+
+    @allure.step('Checking price change from quantity')
+    def price_change_check(self):
         self.click_element(PersonalAccountLocators.plus_button)
-        price_value = self.find_element(PersonalAccountLocators.locator_price_value).text
-        total_payable = self.find_element(PersonalAccountLocators.locator_total_payable).text
+        time.sleep(3)
+        price_value = self.get_text(PersonalAccountLocators.locator_price_value)
+        total_payable = self.get_text(PersonalAccountLocators.locator_total_payable)
         assert price_value == total_payable
 
-# Проверяем кнопки оформить заказ
+    @allure.step('Checking visibility and order status text')
     def checking_order_status(self):
-        #self.send_keys(PersonalAccountLocators.string_street, 'Ленина')
-        self.find_element(PersonalAccountLocators.string_street).clear()
-        #self.send_keys(PersonalAccountLocators.string_house, '79')
-        #self.send_keys(PersonalAccountLocators.string_flat, '2')
         self.click_element(PersonalAccountLocators.payment_method)
+        time.sleep(2)
         self.click_element(PersonalAccountLocators.checkout_button)
-        your_order = self.find_element(PersonalAccountLocators.locator_your_order).text
-        assert self.find_element(PersonalAccountLocators.locator_your_order).is_displayed()
-        assert your_order == 'Спасибо за Ваш заказ.'
+        time.sleep(2)
+        assert self.find_visible_element(PersonalAccountLocators.locator_your_order).is_displayed()
+        assert self.get_text(PersonalAccountLocators.locator_your_order) == 'Спасибо за Ваш заказ.'
+        allure.attach('Спасибо за Ваш заказ.', name='Open window text')
 
-# Проверка строки статус.
+    @allure.step('Status string text check')
     def check_string_status(self):
-        string_status = self.find_element(PersonalAccountLocators.locator_string_status).text
-        assert string_status == 'Принят'
+        assert self.get_text(PersonalAccountLocators.locator_string_status) == 'Принят'
+        allure.attach('Принят', name='Status text')
 
-# Проверка кнопки перейти к оплате
+    @allure.step('Checking button text go to payment')
     def checking_the_proceed_to_payment_button(self):
-        assert self.find_element(PersonalAccountLocators.locator_go_to_payment).text == 'Перейти к оплате'
+        assert self.get_text(PersonalAccountLocators.locator_go_to_payment) == 'Перейти к оплате'
+        allure.attach('Перейти к оплате', name='Button text')
         self.click_element(PersonalAccountLocators.locator_go_to_payment)
-
-
-
-
-
-
-
